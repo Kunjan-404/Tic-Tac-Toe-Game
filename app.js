@@ -19,35 +19,39 @@ const winPatterns = [
 ];
 
 const resetGame = () => {
-  if (count > 0 && count < 9) {
-    nextStarter = nextStarter === "O" ? "x" : "O";
+  if (count > 0 && !gameEnded) {
+    nextStarter = nextStarter === "O" ? "X" : "O";
   }
 
   turnO = nextStarter === "O";
   count = 0;
+  gameEnded = false;
   enableBoxes();
   msgContainer.classList.add("hide");
+
+  resetBtn.classList.remove("hide");
 };
 
 boxes.forEach((box) => {
   box.addEventListener("click", () => {
-    box.classList.remove("o-color", "x-color");
+    box.classList.remove("O-color", "X-color");
 
     if (turnO == true) {
       //player O turn
       box.innerText = "O";
       box.classList.add("O-color");
-      box.classList.remove("X-color");
+      //   box.classList.remove("X-color");
       turnO = false;
     } else {
       //player x turn
       box.innerText = "X";
       box.classList.add("X-color");
-      box.classList.remove("O-color");
+      //   box.classList.remove("O-color");
       turnO = true;
     }
     box.disabled = true;
     count++;
+
     let isWinner = checkWinner();
 
     if (count === 9 && !isWinner) {
@@ -62,7 +66,10 @@ const gameDraw = () => {
   disableBoxes();
 
   //Alternate starter after draw;
-  nextStarter = nextStarter === "O" ? "x" : "O";
+  nextStarter = nextStarter === "O" ? "X" : "O";
+  gameEnded = true;
+
+  resetBtn.classList.add("hide");
 };
 
 const disableBoxes = () => {
@@ -75,7 +82,7 @@ const enableBoxes = () => {
   for (let box of boxes) {
     box.disabled = false;
     box.innerText = "";
-    box.classList.remove("o-color", "x-color");
+    box.classList.remove("O-color", "X-color");
   }
 };
 
@@ -86,6 +93,8 @@ const showWinner = (winner) => {
 
   //the winner gets to choose first.
   nextStarter = winner;
+  gameEnded = true;
+  resetBtn.classList.add("hide");
 };
 
 const checkWinner = () => {
@@ -101,7 +110,15 @@ const checkWinner = () => {
       }
     }
   }
+  return false;
+};
+
+const newGameStart = () => {
+  turnO = nextStarter === "O";
+  count = 0;
+  enableBoxes();
+  msgContainer.classList.add("hide");
 };
 
 newGameBtn.addEventListener("click", resetGame);
-resetBtn.addEventListener("click", resetGame);
+resetBtn.addEventListener("click", newGameStart);
